@@ -269,9 +269,11 @@ def evaluate(hps, generator, eval_loader, writer_eval):
     image_dict = {
       "gen/mel": utils.plot_spectrogram_to_numpy(y_hat_mel[0].cpu().numpy())
     }
+    gen_audio = y_hat[0,:,:y_hat_lengths[0]]
     audio_dict = {
-      "gen/audio": y_hat[0,:,:y_hat_lengths[0]]
+      "gen/audio": gen_audio
     }
+    torchaudio.save(os.path.join(hps.model_dir, "infer_{}.wav".format(global_step)), gen_audio.cpu(), hps.data.sampling_rate)
     if global_step == 0:
       image_dict.update({"gt/mel": utils.plot_spectrogram_to_numpy(mel[0].cpu().numpy())})
       audio_dict.update({"gt/audio": y[0,:,:y_lengths[0]]})
